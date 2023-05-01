@@ -48,6 +48,9 @@ def login_view(request):
     return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
 
 
+
+
+
 class FriendViewSet(viewsets.ModelViewSet):
     queryset = Friend.objects.all()
     # authentication_classes = [JWTAuthentication]
