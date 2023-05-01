@@ -81,7 +81,6 @@ class StoryViewSet(viewsets.ModelViewSet):
         # story_post =self.request.data('user')
         # content_ = self.request.data('content')
         # message_ = self.request.data('message')
-
         serializer.save(user=self.request.user)
 
     def delete_old_stories(self):
