@@ -50,6 +50,11 @@ class FriendSerializer(serializers.ModelSerializer):
 
 class StorySerializer(serializers.ModelSerializer):
     user = serializers.CharField(source='user.username', read_only=True)
+    user_likes = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    user_comments = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    user_reply = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
     class Meta:
         model = Story
-        fields = ('id', 'user', 'message', 'content', 'created_at', 'updated_at')
+        fields = ('id', 'user', 'message', 'content', 'created_at', 'updated_at', 'like', 'comments', 'reply',
+                  'user_likes', 'user_comments', 'user_reply')
