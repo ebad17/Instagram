@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 from crontab import CronTab
+from datetime import timedelta
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -133,4 +134,31 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
+
+# issuedAt = time();
+#  jwt valid for 60 days (60 seconds * 60 minutes * 24 hours * 60 days)
+# expirationTime = $issuedAt + 60 * 60 * 24 * 60;
+# payload = array(
+#   'userid' => $phone,
+#   'iat' => $issuedAt,
+#   'exp' => $expirationTime,
+# );
+# key = "xxxx";
+# alg = 'xxxxx';
+# tokens = JWT::encode($payload, $key, $alg);
+
+# SIMPLE_JWT = {
+#     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+#     "REFRESH_TOKEN_LIFETIME": timedelta(days=1)
+# }
 STATIC_URL = '/static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+STATICFILES_DIRS = [
+ os.path.join(BASE_DIR, 'staticfiles')
+]
+

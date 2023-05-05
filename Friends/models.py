@@ -27,9 +27,6 @@ class Story(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='stories')
     message = models.TextField()
     content = models.FileField(upload_to='data/story')
-    like = models.ForeignKey("self", on_delete=models.CASCADE, null=True, blank=True,related_name='user_likes')
-    comments = models.ForeignKey("self", on_delete=models.CASCADE, null=True, blank=True, related_name='user_comments')
-    reply = models.ForeignKey("self", on_delete=models.CASCADE, null=True, blank=True, related_name='user_reply')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -37,6 +34,16 @@ class Story(models.Model):
         return f"{self.user} {self.created_at}"
 
 
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_likes')
+    story = models.ForeignKey(Story, on_delete=models.CASCADE, related_name='story_likes')
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_comments', null=True, blank=True)
+    story = models.ForeignKey(Story, on_delete=models.CASCADE, related_name='comments')
+    comment = models.CharField(max_length=255)
+    reply = models.ForeignKey("self", on_delete=models.CASCADE, null=True, blank=True, related_name='user_reply')
 
 
 
@@ -47,16 +54,8 @@ class Story(models.Model):
 
 
 
-# class Like(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_likes')
-#     story = models.ForeignKey(Story, on_delete=models.CASCADE, related_name='story_likes')
-#
-#
-# class Comment(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
-#     story = models.ForeignKey(Story, on_delete=models.CASCADE, related_name='comments')
-#     content = models.CharField(max_length=255)
-#     # foreign key with self
+
+    # foreign key with self
 #
 #
 # class Reply(models.Model):
