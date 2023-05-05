@@ -1,20 +1,9 @@
-# from django.contrib.auth.models import User
-import permission as permission
 from django.contrib.auth.models import User
-from django.http import request
-from rest_framework.authtoken.models import TokenProxy
-from crontab import CronTab
-from datetime import datetime, timedelta
-from django_crontab import crontab
-from django.utils import timezone
-
-from rest_framework import status, viewsets, serializers, permissions
+from rest_framework import status, viewsets, serializers
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
-from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
-
 from .models import Friend, Story, Like, Comment
 from .serializers import UserSerializer, LoginSerializer, StorySerializer, FriendSerializer, LikeSerializer, \
     CommentSerializer, CommentyReplSerializer, CommentListSerializer
@@ -127,6 +116,7 @@ class CommentViewSets(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
     def create(self, request, *args, **kwargs):
         comment = request.data.get("comment_type", None)
         if comment == "comment_reply":
@@ -152,14 +142,3 @@ class CommentViewSets(viewsets.ModelViewSet):
         serializer = CommentListSerializer(queryset, many=True)
         return Response(serializer.data)
 
-
-
-
-
-
-
-
-        # def delete_old_stories(self):
-        # Story.objects.filter(created_at__lte=datetime.now() - timedelta(minutes=5)).delete()
-
-        # old_stories = Story.objects.filter(timestamp__lte=timezone.now() - timezone.timedelta(minutes=5))

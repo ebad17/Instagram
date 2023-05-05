@@ -1,9 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
-from rest_framework.fields import IntegerField
-from rest_framework.response import Response
-
 from Friends.models import Friend, Story, Like, Comment
 
 
@@ -73,13 +70,12 @@ class LikeSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Comment
         fields = ['id', 'user', 'story', 'comment', 'reply']
 
-class CommentyReplSerializer(serializers.ModelSerializer):
 
+class CommentReplSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ['id', 'user', 'story', 'comment', 'reply']
@@ -88,6 +84,7 @@ class CommentyReplSerializer(serializers.ModelSerializer):
                 'required': True
             }
         }
+
 
 class CommentListSerializer(serializers.ModelSerializer):
     reply = serializers.SerializerMethodField()
