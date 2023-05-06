@@ -89,11 +89,14 @@ class CommentReplSerializer(serializers.ModelSerializer):
 class CommentListSerializer(serializers.ModelSerializer):
     reply = serializers.SerializerMethodField()
 
+
+
+
     class Meta:
         model = Comment
         fields = ['id', 'user', 'story', 'comment', 'reply']
 
     def get_reply(self, instance):
         reply = Comment.objects.filter(reply=instance.id).exclude(reply=None).all()
-        serializer = CommentyReplSerializer(reply, many=True).data
+        serializer = CommentReplSerializer(reply, many=True).data
         return serializer.data
