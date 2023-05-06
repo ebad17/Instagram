@@ -89,9 +89,6 @@ class CommentReplSerializer(serializers.ModelSerializer):
 class CommentListSerializer(serializers.ModelSerializer):
     reply = serializers.SerializerMethodField()
 
-
-
-
     class Meta:
         model = Comment
         fields = ['id', 'user', 'story', 'comment', 'reply']
