@@ -49,16 +49,46 @@ class StorySerializer(serializers.ModelSerializer):
     user = serializers.CharField(source='user.username', read_only=True)
     likes_count = serializers.SerializerMethodField()
     likes_users = serializers.SerializerMethodField()
+    comments_replies = serializers.SerializerMethodField()
 
     class Meta:
         model = Story
-        fields = ('id', 'user', 'message', 'content', 'created_at', 'updated_at', 'likes_count', 'likes_users')
+        fields = ('id', 'user', 'message', 'content', 'created_at', 'updated_at', 'likes_count', 'likes_users',
+                  'comments_replies')
 
     def get_likes_count(self, obj):
         return Like.objects.filter(story=obj.id).count()
 
     def get_likes_users(self, obj):
         return [like.user.username for like in obj.story_likes.all()]
+
+    def get_comments_replies(self, obj):
+        reply_ids = Comment.objects.filter(reply__comment__isnull=False).values_list("id", flat=True)
+        comments = Comment.objects.filter(story=obj)
+        result = []
+        for comment in comments:
+            replies = Comment.objects.filter(reply=comment)
+            replies_list = []
+            for reply in replies:
+                replies_list.append({
+                    'reply_id': reply.id,
+                    'user': comment.user.username,
+                    'reply_text': reply.comment
+                })
+            if comment.id not in reply_ids:
+                result.append({
+                    'comment_id': comment.id,
+                    'user': comment.user.username,
+                    'comment_text': comment.comment,
+                    'replies': replies_list
+                })
+        return result
+
+        # comments = Comment.objects.filter(story=obj).exclude(user=obj.user)
+        # serialized_comments = CommentSerializer(comments, many=True).data
+        # return serialized_comments
+
+        # return Comment.objects.filter(story=obj.id).count()
 
 
 class LikeSerializer(serializers.ModelSerializer):
@@ -72,28 +102,9 @@ class LikeSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ['id', 'user', 'story', 'comment', 'reply']
-
-
-class CommentReplSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Comment
-        fields = ['id', 'user', 'story', 'comment', 'reply']
+        fields = ['id', 'user', 'story', 'comment', "reply"]
         extra_kwargs = {
-            'replay': {
-                'required': True
+            "reply": {
+                "required": False
             }
         }
-
-
-class CommentListSerializer(serializers.ModelSerializer):
-    reply = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Comment
-        fields = ['id', 'user', 'story', 'comment', 'reply']
-
-    def get_reply(self, instance):
-        reply = Comment.objects.filter(reply=instance.id).exclude(reply=None).all()
-        serializer = CommentReplSerializer(reply, many=True).data
-        return serializer.data

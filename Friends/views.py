@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import Friend, Story, Like, Comment
 from .serializers import UserSerializer, LoginSerializer, StorySerializer, FriendSerializer, LikeSerializer, \
-    CommentSerializer, CommentyReplSerializer, CommentListSerializer
+    CommentSerializer
 
 
 @api_view(['POST'])
@@ -117,17 +117,6 @@ class CommentViewSets(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-    def create(self, request, *args, **kwargs):
-        comment = request.data.get("comment_type", None)
-        if comment == "comment_reply":
-            serializer = CommentyReplSerializer(data=request.data)
-        else:
-            serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
     def get_queryset(self):
         return self.queryset.filter(reply=None)
 
@@ -136,9 +125,9 @@ class CommentViewSets(viewsets.ModelViewSet):
 
         page = self.paginate_queryset(queryset)
         if page is not None:
-            serializer = CommentListSerializer(page, many=True)
+            serializer = CommentSerializer(page, many=True)
             return self.get_paginated_response(serializer.data)
 
-        serializer = CommentListSerializer(queryset, many=True)
+        serializer = CommentSerializer(queryset, many=True)
         return Response(serializer.data)
 
