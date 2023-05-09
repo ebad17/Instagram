@@ -34,7 +34,6 @@ class LoginSerializer(serializers.Serializer):
 
 class FriendSerializer(serializers.ModelSerializer):
     user = serializers.CharField(source='user.username', read_only=True)
-    # friend = serializers.SerializerMethodField()
     friend_name = serializers.CharField(source='friend.username', read_only=True)
 
     class Meta:
@@ -83,12 +82,6 @@ class StorySerializer(serializers.ModelSerializer):
                     'replies': replies_list
                 })
         return result
-
-        # comments = Comment.objects.filter(story=obj).exclude(user=obj.user)
-        # serialized_comments = CommentSerializer(comments, many=True).data
-        # return serialized_comments
-
-        # return Comment.objects.filter(story=obj.id).count()
 
 
 class LikeSerializer(serializers.ModelSerializer):
